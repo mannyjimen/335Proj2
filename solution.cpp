@@ -1,3 +1,4 @@
+#include "FileTrie.hpp"
 #include "FileAVL.hpp"
 #include "File.hpp"
 
@@ -21,4 +22,8 @@ std::vector<File*> FileAVL::query(size_t min, size_t max) {
     // Your code here.
 
     return result;
+}
+
+std::unordered_set<File*> FileTrie::getFilesWithPrefix(const std::string& prefix) const{
+
 }
