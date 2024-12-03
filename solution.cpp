@@ -1,6 +1,7 @@
+#include "File.hpp"
 #include "FileTrie.hpp"
 #include "FileAVL.hpp"
-#include "File.hpp"
+
 
 // ALL YOUR CODE SHOULD BE IN THIS FILE. NO MODIFICATIONS SHOULD BE MADE TO FILEAVL / FILE CLASSES
 // You are permitted to make helper functions (and most likely will need to)
@@ -18,9 +19,10 @@
  */
 std::vector<File*> FileAVL::query(size_t min, size_t max) {
     std::vector<File*> result;
-
+//thoughts:
+//traverse left until we reach a file where left child->getSize() is < min 
+//traverse in order until we reach a file that right child-> getsize() > max
     // Your code here.
-
     return result;
 }
 
