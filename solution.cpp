@@ -9,14 +9,24 @@
 // Below query(), implement and document all methods declared in FileTrie.hpp
 
 inline void traversalPush(std::vector<File*>& finalVector, Node* root, size_t min, size_t max){
-    for (auto x: root->files_){
+    for (File* x: root->files_){
         if (x->getSize() >= min && x->getSize() <= max)
             finalVector.push_back(x);
     }
     if (root->left_)
         traversalPush(finalVector, root->left_, min, max);
     if (root->right_)
-    traversalPush(finalVector, root->left_, min, max);
+        traversalPush(finalVector, root->right_, min, max);
+}
+
+inline void fileVectorSort(std::vector<File*>& finalVector){
+    //lets do bubblesort lol
+    for (int j = 1; j < finalVector.size(); j++){
+        for (int i = 0; i < finalVector.size() - j; ++i){
+            if (finalVector[i]->getSize() > finalVector[i+1]->getSize())
+                std::swap(finalVector[i], finalVector[i+1]);
+        }       
+    }
 }
 
 /**
@@ -34,6 +44,8 @@ std::vector<File*> FileAVL::query(size_t min, size_t max) {
         std::swap(min, max); //will make min the smaller value if min > max
 
     traversalPush(finalVector, root_, min, max);
+
+    fileVectorSort(finalVector);
 
     return finalVector;
 }
