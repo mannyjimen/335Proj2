@@ -9,8 +9,14 @@
 // Below query(), implement and document all methods declared in FileTrie.hpp
 
 inline void traversalPush(std::vector<File*>& finalVector, Node* root, size_t min, size_t max){
-    for (auto x: root->files_)
-        finalVector.push_back(x);
+    for (auto x: root->files_){
+        if (x->getSize() >= min && x->getSize() <= max)
+            finalVector.push_back(x);
+    }
+    if (root->left_)
+        traversalPush(finalVector, root->left_, min, max);
+    if (root->right_)
+    traversalPush(finalVector, root->left_, min, max);
 }
 
 /**
@@ -27,7 +33,7 @@ std::vector<File*> FileAVL::query(size_t min, size_t max) {
     if (max < min) 
         std::swap(min, max); //will make min the smaller value if min > max
 
-    traversalPush(finalVector, root_->left_, min, max);
+    traversalPush(finalVector, root_, min, max);
 
     return finalVector;
 }
