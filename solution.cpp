@@ -8,6 +8,11 @@
 // You must declare them "inline" | declare & implement them at the top of this file, before query()
 // Below query(), implement and document all methods declared in FileTrie.hpp
 
+inline void traversalPush(std::vector<File*>& finalVector, Node* root, size_t min, size_t max){
+    for (auto x: root->files_)
+        finalVector.push_back(x);
+}
+
 /**
  * @brief Retrieves all files in the FileAVL whose file sizes are within [min, max]
  * 
@@ -22,6 +27,7 @@ std::vector<File*> FileAVL::query(size_t min, size_t max) {
     if (max < min) 
         std::swap(min, max); //will make min the smaller value if min > max
 
+    traversalPush(finalVector, root_->left_, min, max);
 
     return finalVector;
 }
@@ -54,8 +60,9 @@ void FileTrie::addFile(File* f){
 //if the next node with the char doesnt exist, return empty set of file pointers
 //once we get to the end of the prefix, return the matching set for where the temp pointer is at. 
 std::unordered_set<File*> FileTrie::getFilesWithPrefix(const std::string& prefix) const{
-    FileTrieNode* temp = head;
     std::unordered_set<File*> emptySet;
+    
+    FileTrieNode* temp = head;
     for (size_t i = 0; i < prefix.size(); i++){
         char c = tolower(prefix[i]);
         if (temp->next[c]){
