@@ -21,8 +21,8 @@ inline void traversalPush(std::vector<File*>& finalVector, Node* root, size_t mi
 
 inline void fileVectorSort(std::vector<File*>& finalVector){
     //lets do bubblesort lol
-    for (int j = 1; j < finalVector.size(); j++){
-        for (int i = 0; i < finalVector.size() - j; ++i){
+    for (size_t j = 1; j < finalVector.size(); j++){
+        for (size_t i = 0; i < finalVector.size() - j; ++i){
             if (finalVector[i]->getSize() > finalVector[i+1]->getSize())
                 std::swap(finalVector[i], finalVector[i+1]);
         }       
@@ -57,39 +57,27 @@ std::vector<File*> FileAVL::query(size_t min, size_t max) {
 //go through the correct FileTrie node, and insert to that node.
 //for adding, head->matching->insert
 
-//auto node_next = root->next['x']
-
 void FileTrie::addFile(File* f){
     const std::string& fname = f->getName();
     FileTrieNode* temp = head;
+    temp->matching.insert(f); //insert to head (since inserting every file)
     for (char c : fname){
         c = tolower(c);
-        temp->matching.insert(f);    
-        if (temp->next[c]) //if does exist, make temp that
-            temp = temp->next[c];
-        else{ //next char doesnt exist
-            FileTrieNode* newNode = new FileTrieNode(c);
-            temp->next[c] = newNode;
-            temp = temp->next[c];
-        }
+        if (!temp->next.count(c)) //if does exist, make temp that
+            temp->next[c] = new FileTrieNode(c); //making new node for next char
+        temp = temp->next[c];
+        temp->matching.insert(f);
     }
 }
-
 //if the next node with the char doesnt exist, return empty set of file pointers
 //once we get to the end of the prefix, return the matching set for where the temp pointer is at. 
 std::unordered_set<File*> FileTrie::getFilesWithPrefix(const std::string& prefix) const{
-    std::unordered_set<File*> emptySet;
-    
-    FileTrieNode* temp = head;
-    for (size_t i = 0; i < prefix.size(); i++){
-        char c = tolower(prefix[i]);
-        if (temp->next[c]){
-            if (i == prefix.size() - 1)
-                return temp->matching;
-            temp = temp->next[c];
-        }
-        else
-            return emptySet;
+    FileTrieNode* temp = head; //lets try to minimize this loop.  
+    for (char c: prefix){ //using nicer looking for loop
+        c = tolower(c);
+        if (!temp->next.count(c))
+            return {}; // return empty set if next char is not found
+        temp = temp->next[c];
     }
-    return emptySet;
+    return temp->matching;
 }
