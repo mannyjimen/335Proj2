@@ -29,6 +29,23 @@ inline void fileVectorSort(std::vector<File*>& finalVector){
     }
 }
 
+inline int IndexInNext(char c, std::vector<FileTrieNode*> mainVec){
+    for (int i = 0; i < mainVec.size(); i++){
+        FileTrieNode* x = mainVec[i];
+        if (c == x->stored)
+            return i;
+    }
+    return -1;
+}
+
+inline void destroyNodes(FileTrieNode* mainNode){
+    for (FileTrieNode* x : mainNode->next)
+        destroyNodes(x);
+    delete mainNode;
+    mainNode = nullptr;
+}
+
+
 /**
  * @brief Retrieves all files in the FileAVL whose file sizes are within [min, max]
  * 
@@ -63,9 +80,9 @@ void FileTrie::addFile(File* f){
     temp->matching.insert(f); //insert to head (since inserting every file)
     for (char c : fname){
         c = tolower(c);
-        if (!temp->next.count(c)) //if does exist, make temp that
-            temp->next[c] = new FileTrieNode(c); //making new node for next char
-        temp = temp->next[c];
+        if (IndexInNext(c, temp->next) == -1) //if does exist, make temp that
+            temp->next.push_back(new FileTrieNode(c)); //making new node for next char
+        temp = temp->next[IndexInNext(c, temp->next)];
         temp->matching.insert(f);
     }
 }
@@ -75,9 +92,14 @@ std::unordered_set<File*> FileTrie::getFilesWithPrefix(const std::string& prefix
     FileTrieNode* temp = head; //lets try to minimize this loop.  
     for (char c: prefix){ //using nicer looking for loop
         c = tolower(c);
-        if (!temp->next.count(c))
+        if (IndexInNext(c, temp->next) == -1)
             return {}; // return empty set if next char is not found
-        temp = temp->next[c];
+        temp = temp->next[IndexInNext(c, temp->next)];
     }
     return temp->matching;
+}
+
+
+FileTrie::~FileTrie(){
+    destroyNodes(head);
 }

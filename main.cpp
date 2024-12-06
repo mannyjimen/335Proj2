@@ -4,9 +4,6 @@ FileTrie::FileTrie(){
     head = new FileTrieNode();
 }
 
-FileTrie::~FileTrie(){
-}
-
 int main(){
     File* first = new File("example.txt", "contents of first_file");
     File* second = new File("exemple.txt", "zzzzzcontents of second_file");
